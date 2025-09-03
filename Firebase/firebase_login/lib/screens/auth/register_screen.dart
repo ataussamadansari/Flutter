@@ -1,153 +1,169 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
-import '../../providers/auth/auth_provider.dart';
-import '../home/home_screen.dart';
 
-class RegisterScreen extends StatefulWidget
-{
-    const RegisterScreen({super.key});
+import '../../providers/auth_provider.dart';
 
-    @override
-    State<RegisterScreen> createState() => _RegisterScreenState();
+class RegisterScreen extends StatefulWidget {
+  @override
+  _RegisterScreenState createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen>
-{
-    final formKey = GlobalKey<FormState>();
-    final nameController = TextEditingController();
-    final emailController = TextEditingController();
-    final passwordController = TextEditingController();
-    bool obscure = true;
+class _RegisterScreenState extends State<RegisterScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
 
-    void _register(AuthProvider auth) async
-    {
-        if (!formKey.currentState!.validate()) return;
+  @override
+  Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
 
-        await auth.register(
-            nameController.text.trim(),
-            emailController.text.trim(),
-            passwordController.text.trim()
-        );
+    return Scaffold(
+      body: Form(
+        key: _formKey,
+        child: ListView(
+          padding: EdgeInsets.all(12.0),
+          children: [
+            SizedBox(height: 20),
+            SvgPicture.asset('assets/svgs/signup.svg', height: 300, width: double.infinity,),
+            // 👇 Title
+            Text(
+              "Create Account ✨",
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            // 👇 Description
+            Text(
+              "Join us today and get started in just a few steps.",
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[600],
+              ),
+            ),
 
-        if (auth.errorMsg != null) 
-        {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(auth.errorMsg!), backgroundColor: Colors.red)
-            );
-        }
+            SizedBox(height: 20),
 
-        if (auth.appUser != null) 
-        {
+            TextFormField(
+              controller: _nameController,
+              decoration: InputDecoration(
+                labelText: 'Full Name',
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your name';
+                }
+                return null;
+              },
+            ),
+            SizedBox(height: 16),
+            TextFormField(
+              controller: _emailController,
+              decoration: InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter email';
+                }
+                if (!value.contains('@')) {
+                  return 'Please enter a valid email';
+                }
+                return null;
+              },
+            ),
+            SizedBox(height: 16),
+            TextFormField(
+              controller: _passwordController,
+              decoration: InputDecoration(
+                labelText: 'Password',
+                border: OutlineInputBorder(),
+              ),
+              obscureText: true,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter password';
+                }
+                if (value.length < 6) {
+                  return 'Password must be at least 6 characters';
+                }
+                return null;
+              },
+            ),
+            SizedBox(height: 16),
+            TextFormField(
+              controller: _confirmPasswordController,
+              decoration: InputDecoration(
+                labelText: 'Confirm Password',
+                border: OutlineInputBorder(),
+              ),
+              obscureText: true,
+              validator: (value) {
+                if (value != _passwordController.text) {
+                  return 'Passwords do not match';
+                }
+                return null;
+              },
+            ),
+            SizedBox(height: 24),
+            authProvider.isLoading
+                ? Center(child: CircularProgressIndicator())
+                : ElevatedButton(
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  bool success = await authProvider.register(
+                    _emailController.text,
+                    _passwordController.text,
+                    _nameController.text,
+                  );
+
+                  if (success) {
+                    Navigator.pop(context);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Registration failed. Please try again.'))
+                    );
+                  }
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size(double.infinity, 50),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                backgroundColor: Colors.green
+              ),
+              child: Text('Register', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w800),),
+            ),
+            SizedBox(height: 16),
+          ],
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: TextButton(
+          onPressed: () {
             Navigator.pop(context);
-        }
-    }
+          },
+          style: TextButton.styleFrom(
+            overlayColor: Colors.transparent,
+            foregroundColor: Colors.green,
+          ),
+          child: Text('Already have an account? Login'),
+        ),
+      ),
+    );
+  }
 
-    @override
-    Widget build(BuildContext context) 
-    {
-        return Consumer<AuthProvider>(
-            builder: (context, auth, _) => Scaffold(
-                backgroundColor: Colors.green.shade50,
-                body: Center(
-                    child: SingleChildScrollView(
-                        padding: const EdgeInsets.all(20),
-                        child: Card(
-                            elevation: 6,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16)),
-                            child: Padding(
-                                padding: const EdgeInsets.all(20),
-                                child: Form(
-                                    key: formKey,
-                                    child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                            Text("Create Account 🚀",
-                                                style: TextStyle(
-                                                    fontSize: 24, fontWeight: FontWeight.bold)),
-                                            SizedBox(height: 30),
-
-                                            // Name
-                                            TextFormField(
-                                                controller: nameController,
-                                                decoration: InputDecoration(
-                                                    labelText: "Name",
-                                                    prefixIcon: Icon(Icons.person),
-                                                    border: OutlineInputBorder(
-                                                        borderRadius: BorderRadius.circular(12))
-                                                ),
-                                                validator: (value) =>
-                                                value!.isEmpty ? "Enter your name" : null
-                                            ),
-                                            SizedBox(height: 15),
-
-                                            // Email
-                                            TextFormField(
-                                                controller: emailController,
-                                                decoration: InputDecoration(
-                                                    labelText: "Email",
-                                                    prefixIcon: Icon(Icons.email),
-                                                    border: OutlineInputBorder(
-                                                        borderRadius: BorderRadius.circular(12))
-                                                ),
-                                                validator: (value) =>
-                                                value!.isEmpty ? "Enter your email" : null
-                                            ),
-                                            SizedBox(height: 15),
-
-                                            // Password
-                                            TextFormField(
-                                                controller: passwordController,
-                                                obscureText: obscure,
-                                                decoration: InputDecoration(
-                                                    labelText: "Password",
-                                                    prefixIcon: Icon(Icons.lock),
-                                                    suffixIcon: IconButton(
-                                                        icon: Icon(
-                                                            obscure ? Icons.visibility : Icons.visibility_off),
-                                                        onPressed: () =>
-                                                        setState(() => obscure = !obscure)
-                                                    ),
-                                                    border: OutlineInputBorder(
-                                                        borderRadius: BorderRadius.circular(12))
-                                                ),
-                                                validator: (value) => value!.length < 6
-                                                    ? "Min 6 characters required"
-                                                    : null
-                                            ),
-                                            SizedBox(height: 20),
-
-                                            // Register Button
-                                            SizedBox(
-                                                width: double.infinity,
-                                                child: ElevatedButton(
-                                                    style: ElevatedButton.styleFrom(
-                                                        backgroundColor: Colors.green,
-                                                        padding: EdgeInsets.symmetric(vertical: 14),
-                                                        shape: RoundedRectangleBorder(
-                                                            borderRadius: BorderRadius.circular(12))
-                                                    ),
-                                                    onPressed: auth.isLoading
-                                                        ? null
-                                                        : () => _register(auth),
-                                                    child: auth.isLoading
-                                                        ? CircularProgressIndicator(color: Colors.white)
-                                                        : Text("Register", style: TextStyle(fontSize: 18, color: Colors.white))
-                                                )
-                                            ),
-
-                                            TextButton(
-                                                onPressed: () => Navigator.pop(context),
-                                                child: Text("Already have an account? Login")
-                                            )
-                                        ]
-                                    )
-                                )
-                            )
-                        )
-                    )
-                )
-            )
-        );
-    }
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _nameController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
 }
