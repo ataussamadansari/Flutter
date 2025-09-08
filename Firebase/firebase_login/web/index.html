@@ -34,5 +34,55 @@
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+
+  <div class="preloader">
+    <div class="preloader-container">
+      <img width="50" class="preloader-img" src="favicon.png" alt="">
+      <div class="loader"></div>
+    </div>
+  </div>
+
+  <header class="header">
+    <div class="header-container d-flex align-items-center justify-content-between">
+      <div class="header-start d-flex gap-5 align-items-center">
+        <img class="logo" src="logo.png" alt="">
+        <div class="placeholder placeholder-wide"></div>
+        <div class="placeholder"></div>
+        <div class="placeholder"></div>
+        <div class="placeholder"></div>
+      </div>
+      <div class="header-end d-flex gap-5">
+        <div class="placeholder"></div>
+        <div class="placeholder"></div>
+        <div class="placeholder"></div>
+      </div>
+    </div>
+  </header>
+
+
+<script>
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "firebase/app";
+  import { getAnalytics } from "firebase/analytics";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyCXv6sKH7Ls_bkBmI5H95Wg0or-S3oRJOU",
+    authDomain: "fir-intro-d70e7.firebaseapp.com",
+    projectId: "fir-intro-d70e7",
+    storageBucket: "fir-intro-d70e7.firebasestorage.app",
+    messagingSenderId: "766909176940",
+    appId: "1:766909176940:web:b9439605f7de61b82a8c49",
+    measurementId: "G-C76PS18NDM"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
 </body>
 </html>

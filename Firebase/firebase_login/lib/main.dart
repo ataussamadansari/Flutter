@@ -8,11 +8,14 @@ import 'package:firebase_login/screens/quote/add_quote_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'firebase_options.dart';
+
 main() async
 {
     WidgetsFlutterBinding.ensureInitialized();
-    await Firebase.initializeApp();
-
+    await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+    );
     runApp(const MyApp());
 }
 
