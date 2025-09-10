@@ -15,39 +15,41 @@ class HomeView extends GetView<HomeController>
     {
         return Scaffold(
             appBar: AppBar(
-                title: Text('User List', style: TextStyle(color: Colors.white),),
+                title: Text('User List', style: TextStyle(color: Colors.white)),
                 backgroundColor: Colors.green,
                 centerTitle: true,
-              actions: [
-                IconButton(onPressed: () => controller.refreshUsers(), icon: Icon(Icons.refresh, color: Colors.white))
-              ],
+                actions: [
+                    IconButton(onPressed: () => controller.refreshUsers(), icon: Icon(Icons.refresh, color: Colors.white))
+                ]
             ),
             body: Column(
                 children: [
                     Expanded(child: Obx(()
                             {
-                                if (controller.isLoading.value) 
+                                if (controller.isLoading.value)
                                 {
                                     return const Center(child: CircularProgressIndicator());
                                 }
-                                if (controller.hasError.value) 
+                                if (controller.hasError.value)
                                 {
                                     return const Center(child: Text('Error loading users.'));
                                 }
-                                if (controller.users.isEmpty) {
-                                  return const Center(child: Text('No users found.'));
+                                if (controller.users.isEmpty) 
+                                {
+                                    return const Center(child: Text('No users found.'));
                                 }
                                 return ListView.builder(
-                                  itemCount: controller.users.length,
-                                    itemBuilder: (context, index) {
-                                      final user = controller.users[index];
-                                      return UserCard(
-                                        user: user,
-                                        onTap: () => _showUserDetails(context, user),
-                                        // onLongPress: () => _showUserById(context, user.id!),
-                                          onLongPress: () => controller.navigateToDetails(user.id!),
-                                        onDelete: () => _showDeleteDialog(context, user)
-                                      );
+                                    itemCount: controller.users.length,
+                                    itemBuilder: (context, index)
+                                    {
+                                        final user = controller.users[index];
+                                        return UserCard(
+                                            user: user,
+                                            onLongPress: () => _showUserDetails(context, user),
+                                            // onLongPress: () => _showUserById(context, user.id!),
+                                            onTap: () => controller.navigateToDetails(user.id!),
+                                            onDelete: () => _showDeleteDialog(context, user)
+                                        );
                                     }
                                 );
                             }
@@ -59,45 +61,52 @@ class HomeView extends GetView<HomeController>
     }
 }
 
-_showUserDetails(BuildContext context, UserModel user) {
-  showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16))
-      ),
-      builder: (context) => UserDetailsSheet(user: user)
-  );
+_showUserDetails(BuildContext context, UserModel user)
+{
+    showModalBottomSheet(
+        context: context,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16))
+        ),
+        builder: (context) => UserDetailsSheet(user: user)
+    );
 }
 
-_showDeleteDialog(BuildContext context, UserModel user) {
-  final controller = Get.find<HomeController>();
-  showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete User'),
-        content: Text('Are you sure want to delete ${user.name}'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-          TextButton(
-              onPressed: () {
-            Navigator.pop(context);
-            controller.deleteUser(user.id!.toInt());
-          }, child: const Text('Delete', style: TextStyle(color: Colors.red),)),
-        ],
-      )
-  );
+_showDeleteDialog(BuildContext context, UserModel user)
+{
+    final controller = Get.find<HomeController>();
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+            title: const Text('Delete User'),
+            content: Text('Are you sure want to delete ${user.name}'),
+            actions: [
+                TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+                TextButton(
+                    onPressed: ()
+                    {
+                        Navigator.pop(context);
+                        controller.deleteUser(user.id!.toInt());
+                    }, child: const Text('Delete', style: TextStyle(color: Colors.red)))
+            ]
+        )
+    );
 }
 
-_showUserById(BuildContext context, int id) async {
-  final controller = Get.find<HomeController>();
+_showUserById(BuildContext context, int id) async
+{
+    final controller = Get.find<HomeController>();
 
-  final response = await controller.getUserById(id);
+    final response = await controller.getUserById(id);
 
-  UserModel? userModel = response;
+    UserModel? userModel = response;
 
-  if (userModel != null) {
-    AppHelpers.showSnackBar(title: 'Success', message: "${userModel.name}");
-  } else {
-    AppHelpers.showSnackBar(title: 'Error', message: 'An error occurred while fetching user details!', isError: true);
-  }
+    if (userModel != null) 
+    {
+        AppHelpers.showSnackBar(title: 'Success', message: "${userModel.name}");
+    }
+    else 
+    {
+        AppHelpers.showSnackBar(title: 'Error', message: 'An error occurred while fetching user details!', isError: true);
+    }
 }

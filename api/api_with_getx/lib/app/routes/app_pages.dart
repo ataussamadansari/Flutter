@@ -9,6 +9,6 @@ import '../modules/home/views/home_view.dart';
 class AppPages {
   static final route = [
     GetPage(name: '/home', page: ()=> HomeView(), binding: HomeBinding()),
-    GetPage(name: '/details', page: ()=> DetailsView(), binding: DetailsBinding()),
+    GetPage(name: '/details', page: ()=> DetailsView(), binding: DetailsBinding(), transition: Transition.circularReveal),
   ];
 }

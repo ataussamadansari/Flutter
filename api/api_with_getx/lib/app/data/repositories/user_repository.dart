@@ -1,4 +1,4 @@
-import 'package:api_with_getx/app/core/constants/api_contants.dart';
+import 'package:api_with_getx/app/core/constants/api_constants.dart';
 import 'package:api_with_getx/app/data/models/response_model.dart';
 import 'package:api_with_getx/app/data/models/user_model.dart';
 import 'package:api_with_getx/app/data/services/api_services.dart';

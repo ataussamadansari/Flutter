@@ -1,4 +1,4 @@
-import 'package:api_with_getx/app/core/constants/api_contants.dart';
+import 'package:api_with_getx/app/core/constants/api_constants.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart' as getx;
