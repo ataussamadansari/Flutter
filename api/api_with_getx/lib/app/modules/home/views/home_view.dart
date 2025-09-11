@@ -3,7 +3,7 @@ import 'package:api_with_getx/app/data/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../globle_widgets/home/user_card.dart';
+import '../../../global_widgets/home/user_card.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController>
